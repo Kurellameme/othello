@@ -61,7 +61,6 @@ bool Board::isDone() {
 //TODO set
 std::vector<Move> Board::possibleMoves(Side side) {
     std::vector<Move> possible_moves;
-    std::cerr << "computing possible moves now." << std::endl;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if (occupied(i, j)) {
@@ -92,14 +91,6 @@ std::vector<Move> Board::possibleMoves(Side side) {
             }
         }
     }
-    //FILE *output = fopen("error.log", "w");
-    //if (output != NULL) {
-        for (int i = 0; i < possible_moves.size(); i++) {
-            std::cerr << possible_moves[i].getX() << " " << possible_moves[i].getY() << std::endl;
-            //fprintf(output, "%d, %d", possible_moves[i].getX(), possible_moves[i].getY());
-        }
-    //}
-    //fclose(output);
     return possible_moves;
 }
 

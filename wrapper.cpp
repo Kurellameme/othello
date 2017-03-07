@@ -1,11 +1,13 @@
 #include <iostream>
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include "player.hpp"
 using namespace std;
 
 int main(int argc, char *argv[]) {
     // Read in side the player is on.
+    srand(time(NULL));
     if (argc != 2)  {
         cerr << "usage: " << argv[0] << " side" << endl;
         exit(-1);

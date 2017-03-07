@@ -42,19 +42,14 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      * TODO: Implement how moves your AI should play here. You should first
      * process the opponent's opponents move before calculating your own move
      */
-    std::cerr << "tryna make a change" << std::endl;
     Move *ret;
     board.doMove(opponentsMove, (side == BLACK) ? WHITE : BLACK);
-    if (board.possibleMoves(side).empty()) {
-        std::cerr << "setting ret to nullptr." << std::endl;
+    std::vector<Move> moveset = board.possibleMoves(side);
+    if (moveset.empty()) {
         ret = nullptr;
     } else {
-        std::vector<Move> moveset = board.possibleMoves(side);
-        ret = &(moveset[rand() % moveset.size()]);
+        ret = new Move((const Move) moveset[rand() % moveset.size()]);
     }
-    std::cerr << "doing move at address " << ret << std::endl;
-    std::cerr << "move: " << ret->getX() << " " << ret->getY() << std::endl; 
     board.doMove(ret, side);
-    std::cerr << "move done" << std::endl;
     return ret;
 }

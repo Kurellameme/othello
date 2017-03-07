@@ -13,6 +13,12 @@ public:
         this->x = x;
         this->y = y;        
     }
+
+    Move(const Move &other) {
+        this->x = other.x;
+        this->y = other.y;
+    }
+
     ~Move() {}
 
     int getX() { return x; }
