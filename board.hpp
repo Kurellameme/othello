@@ -5,6 +5,7 @@
 #include <vector>
 #include <iostream>
 #include "common.hpp"
+
 using namespace std;
 
 class Board {
@@ -13,8 +14,7 @@ private:
     bitset<64> black;
     bitset<64> taken;
 
-    bool occupied(int x, int y);
-    bool get(Side side, int x, int y);
+    bool occupied(int x, int y) const;
     void set(Side side, int x, int y);
     bool onBoard(int x, int y);
 
@@ -23,6 +23,7 @@ public:
     ~Board();
     Board *copy();
 
+    bool get(Side side, int x, int y) const;
     bool isDone();
     bool hasMoves(Side side);
     std::vector<Move> possibleMoves(Side side);

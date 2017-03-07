@@ -28,11 +28,11 @@ Board *Board::copy() {
     return newBoard;
 }
 
-bool Board::occupied(int x, int y) {
+bool Board::occupied(int x, int y) const {
     return taken[x + 8*y];
 }
 
-bool Board::get(Side side, int x, int y) {
+bool Board::get(Side side, int x, int y) const {
     return occupied(x, y) && (black[x + 8*y] == (side == BLACK));
 }
 
