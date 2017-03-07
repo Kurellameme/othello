@@ -2,6 +2,7 @@
 #define __BOARD_H__
 
 #include <bitset>
+#include <vector>
 #include "common.hpp"
 using namespace std;
 
@@ -23,6 +24,7 @@ public:
 
     bool isDone();
     bool hasMoves(Side side);
+    std::vector<Move> moveset(Side side);
     bool checkMove(Move *m, Side side);
     void doMove(Move *m, Side side);
     int count(Side side);
