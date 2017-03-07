@@ -58,13 +58,30 @@ bool Board::isDone() {
  * Returns true if there are legal moves for the given side.
  */
 bool Board::hasMoves(Side side) {
+    bool has_move = false;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
-            Move move(i, j);
-            if (checkMove(&move, side)) return true;
+            if (occupied(i, j)) {
+                if (i != 0) {
+                    Move move_left(i-1, j);
+                    has_move = has_move || checkMove(&move_left, side);
+                }
+                if (i != 7) {
+                    Move move_right(i+1, j); 
+                    has_move = has_move || checkMove(&move_right, side);
+                }
+                if (j != 0) {
+                    Move move_up(i, j-1); 
+                    has_move = has_move || checkMove(&move_up, side);
+                }
+                if (j != 7) {
+                    Move move_down(i, j+1);
+                    has_move = has_move || checkMove(&move_down, side);
+                }
+            }
         }
     }
-    return false;
+    return has_move;
 }
 
 /*
