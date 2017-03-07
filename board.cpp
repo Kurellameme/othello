@@ -51,32 +51,41 @@ bool Board::onBoard(int x, int y) {
  * if neither side has a legal move.
  */
 bool Board::isDone() {
-    return !(hasMoves(BLACK) || hasMoves(WHITE));
+    return (possibleMoves(BLACK).empty() && possibleMoves(WHITE).empty());
 }
 
 /*
- * Returns true if there are legal moves for the given side.
+ * Returns a vector of all possible moves.
+ * Returns an empty vector if no moves are possible.
  */
-bool Board::hasMoves(Side side) {
-    bool has_move = false;
+std::vector<Move> Board::possibleMoves(Side side) {
+    std::vector possible_moves;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if (occupied(i, j)) {
                 if (i != 0) {
                     Move move_left(i-1, j);
-                    has_move = has_move || checkMove(&move_left, side);
+                    if (checkMove(&move_left, side)) {
+                        possible_moves.push_back(move_left);
+                    }
                 }
                 if (i != 7) {
                     Move move_right(i+1, j); 
-                    has_move = has_move || checkMove(&move_right, side);
+                    if (checkMove(&move_right, side)) {
+                        possible_moves.push_back(move_right);
+                    }
                 }
                 if (j != 0) {
                     Move move_up(i, j-1); 
-                    has_move = has_move || checkMove(&move_up, side);
+                    if (checkMove(&move_up, side)) {
+                        possible_moves.push_back(move_up);
+                    }
                 }
                 if (j != 7) {
                     Move move_down(i, j+1);
-                    has_move = has_move || checkMove(&move_down, side);
+                    if (checkMove(&move_down, side)) {
+                        possible_moves.push_back(move_down);
+                    }
                 }
             }
         }
@@ -89,7 +98,7 @@ bool Board::hasMoves(Side side) {
  */
 bool Board::checkMove(Move *m, Side side) {
     // Passing is only legal if you have no moves.
-    if (m == nullptr) return !hasMoves(side);
+    if (m == nullptr) return possibleMoves(side).empty();
 
     int X = m->getX();
     int Y = m->getY();

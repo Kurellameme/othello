@@ -23,8 +23,7 @@ public:
     Board *copy();
 
     bool isDone();
-    bool hasMoves(Side side);
-    std::vector<Move> moveset(Side side);
+    std::vector<Move> possibleMoves(Side side);
     bool checkMove(Move *m, Side side);
     void doMove(Move *m, Side side);
     int count(Side side);

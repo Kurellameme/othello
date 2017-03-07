@@ -44,7 +44,7 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
      */
     Move *ret;
     board.doMove(opponentsMove, (side == BLACK) ? WHITE : BLACK);
-    if (!board.hasMoves(side)) {
+    if (board.possibleMoves(side).empty()) {
         ret = nullptr;
     } else {
     }
