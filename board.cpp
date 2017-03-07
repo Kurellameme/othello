@@ -59,7 +59,7 @@ bool Board::isDone() {
  * Returns an empty vector if no moves are possible.
  */
 std::vector<Move> Board::possibleMoves(Side side) {
-    std::vector possible_moves;
+    std::vector<Move> possible_moves;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if (occupied(i, j)) {
@@ -90,7 +90,7 @@ std::vector<Move> Board::possibleMoves(Side side) {
             }
         }
     }
-    return has_move;
+    return possible_moves;
 }
 
 /*

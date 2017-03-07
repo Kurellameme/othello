@@ -1,5 +1,5 @@
 #include "player.hpp"
-
+#include <vector>
 /*
  * Constructor for the player; initialize everything here. The side your AI is
  * on (BLACK or WHITE) is passed in as "side". The constructor must finish
@@ -47,6 +47,8 @@ Move *Player::doMove(Move *opponentsMove, int msLeft) {
     if (board.possibleMoves(side).empty()) {
         ret = nullptr;
     } else {
+        std::vector<Move> moveset = board.possibleMoves(side);
+        ret = &(moveset[rand() % moveset.size()]);
     }
     board.doMove(ret, side);
     return ret;
