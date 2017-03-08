@@ -36,6 +36,97 @@ bool Board::get(Side side, int x, int y) const {
     return occupied(x, y) && (black[x + 8*y] == (side == BLACK));
 }
 
+/*
+ * Returns true if a square is in a corner of the board.
+ */
+bool isCorner(int x, int y) {
+    return ((x == 0 && y == 0) ||
+            (x == 7 && y == 0) ||
+            (x == 0 && y == 7) ||
+            (x == 7 && y == 7));
+}
+
+/* 
+ * Returns true if a square is on the edge of the board, but is NOT a corner
+ * or directly adjacent to a corner. So, on an 8x8 board, there would be only
+ * 4 squares on each side that would be classified as edges.
+ */
+bool isEdge(int x, int y) {
+    return ((x == 0 && y == 2) ||
+            (x == 0 && y == 3) ||
+            (x == 0 && y == 4) ||
+            (x == 0 && y == 5) ||
+            (x == 7 && y == 2) ||
+            (x == 7 && y == 3) ||
+            (x == 7 && y == 4) ||
+            (x == 7 && y == 5) ||
+            (x == 2 && y == 0) ||
+            (x == 3 && y == 0) ||
+            (x == 4 && y == 0) ||
+            (x == 5 && y == 0) ||
+            (x == 2 && y == 7) ||
+            (x == 3 && y == 7) ||
+            (x == 4 && y == 7) ||
+            (x == 5 && y == 7));
+}
+
+/*
+ * Returns true if a move is next to a corner square on the board.
+ */
+bool isNextToCorner(int x, int y) {
+    return ((x == 1 && y == 0) ||
+            (x == 0 && y == 1) ||
+            (x == 1 && y == 1) ||
+            (x == 6 && y == 0) ||
+            (x == 6 && y == 1) ||
+            (x == 7 && y == 1) ||
+            (x == 0 && y == 6) ||
+            (x == 1 && y == 6) ||
+            (x == 1 && y == 7) ||
+            (x == 6 && y == 7) ||
+            (x == 6 && y == 6) ||
+            (x == 7 && y == 6));
+}
+
+int Board::score(Side side) const {
+    int score = 0;
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            if (occupied(i, j)) { 
+                if (get(side, i, j)) {
+                    if (isCorner(i, j)) {
+                        score += GREAT;
+                    }
+                    else if (isEdge(i, j)) {
+                        score += GOOD;
+                    }
+                    else if (isNextToCorner(i, j)) {
+                        score--;
+                    }
+                    else {
+                        score++;
+                    }
+                }
+                else {
+                    if (isCorner(i, j)) {
+                        score -= GREAT;
+                    }
+                    else if (isEdge(i, j)) {
+                        score -= GOOD;
+                    }
+                    else if (isNextToCorner(i, j)) {
+                        score++;
+                    }
+                    else {
+                        score--;
+                    }
+                }
+            }
+        }
+    }
+    return score;
+}
+
 void Board::set(Side side, int x, int y) {
     taken.set(x + 8*y);
     black.set(x + 8*y, side == BLACK);

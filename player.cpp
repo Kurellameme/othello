@@ -9,11 +9,6 @@ Player::Player(Side side) {
     // Will be set to true in test_minimax.cpp.
     testingMinimax = false;
 
-    /*
-     * TODO: Do any initialization you need to do here (setting up the board,
-     * precalculating things, etc.) However, remember that you will only have
-     * 30 seconds.
-     */
     this->board = Board();
     this->side = side;
 }
@@ -33,6 +28,7 @@ Player::~Player() {
  *
  * returns one of three Score enums defined in common.hpp.
  */
+/*
 void Player::moveScore(Move &move) { 
     int x = move.getX();
     int y = move.getY();
@@ -67,34 +63,7 @@ void Player::moveScore(Move &move) {
         move.setScore(DEFAULT);
     }
 }
-
-/*
- * Returns true if a move is in a corner of the board.
- */
-bool isCorner(int move_x, int move_y) {
-    return ((move_x == 0 && move_y == 0) ||
-            (move_x == 7 && move_y == 0) ||
-            (move_x == 0 && move_y == 7) ||
-            (move_x == 7 && move_y == 7));
-}
-
-/*
- * Returns true if a move is next to a corner square on the board.
- */
-bool isNextToCorner(int move_x, int move_y) {
-    return ((move_x == 1 && move_y == 0) ||
-            (move_x == 0 && move_y == 1) ||
-            (move_x == 1 && move_y == 1) ||
-            (move_x == 6 && move_y == 0) ||
-            (move_x == 6 && move_y == 1) ||
-            (move_x == 7 && move_y == 1) ||
-            (move_x == 0 && move_y == 6) ||
-            (move_x == 1 && move_y == 6) ||
-            (move_x == 1 && move_y == 7) ||
-            (move_x == 6 && move_y == 7) ||
-            (move_x == 6 && move_y == 6) ||
-            (move_x == 7 && move_y == 6));
-}
+*/
 
 /*
  * Takes an edge that is next to a corner square on the board and
@@ -125,31 +94,6 @@ Move getCornerFromEdge(int move_x, int move_y) {
     }
 }
 
-
-/* 
- * Returns true if a move is on the edge of the board, but is NOT a corner
- * or directly adjacent to a corner. So, on an 8x8 board, there would be only
- * 4 squares on each side that would be classified as edges.
- */
-bool isEdge(int move_x, int move_y) {
-    return ((move_x == 0 && move_y == 2) ||
-            (move_x == 0 && move_y == 3) ||
-            (move_x == 0 && move_y == 4) ||
-            (move_x == 0 && move_y == 5) ||
-            (move_x == 7 && move_y == 2) ||
-            (move_x == 7 && move_y == 3) ||
-            (move_x == 7 && move_y == 4) ||
-            (move_x == 7 && move_y == 5) ||
-            (move_x == 2 && move_y == 0) ||
-            (move_x == 3 && move_y == 0) ||
-            (move_x == 4 && move_y == 0) ||
-            (move_x == 5 && move_y == 0) ||
-            (move_x == 2 && move_y == 7) ||
-            (move_x == 3 && move_y == 7) ||
-            (move_x == 4 && move_y == 7) ||
-            (move_x == 5 && move_y == 7));
-}
-
 /*
  * Compute the next move given the opponent's last move. Your AI is
  * expected to keep track of the board on its own. If this is the first move,
@@ -164,30 +108,61 @@ bool isEdge(int move_x, int move_y) {
  * return nullptr.
  */
 Move *Player::doMove(Move *opponentsMove, int msLeft) {
-    /*
-     * TODO: Implement how moves your AI should play here. You should first
-     * process the opponent's opponents move before calculating your own move
-     */
-
     // process opponent's move
     board.doMove(opponentsMove, (side == BLACK) ? WHITE : BLACK);
 
-    // decide what move to use from our possible moves
+    // look at all our possible moves
     std::vector<Move> moveset = board.possibleMoves(side);
-    Move *max_scoring_move;
+    Move *ret;
+    int minmax;
 
-    // if there aren't any moves to make, use nullptr as best move to pass
+    // if there aren't any moves to make, use nullptr
     if (moveset.empty()) {
-        max_scoring_move = nullptr;
+        ret = nullptr;
     } else {
-        // we loop through all the moves and compute their scores, then use 
-        // the highest scoring move.
+        // we loop through all the moves and make copies of boards to do them on.
+        int total_score;
         for (unsigned int i = 0; i < moveset.size(); i++) {
-            moveScore(moveset[i]);
+            std::vector<int> total_scores;
+            // moveScore(moveset[i]);
+            Board *one_deep = board.copy();
+            one_deep->doMove(&moveset[i], side);
+            // then, for each board we made a move on, do all moves on that
+            // board for the other side.
+            std::vector<Move> new_moveset = one_deep->possibleMoves((side == BLACK) ? WHITE : BLACK);
+            if (new_moveset.empty()) {
+                // they're gonna pass, so we know the total score is just
+                // the score from our board
+                total_score = one_deep->score(side);
+                total_scores.push_back(total_score);
+            }
+            else {
+                for (unsigned int j = 0; j < new_moveset.size(); j++) {
+                    // moveScore(new_moveset[j]);
+                    Board *two_deep = one_deep->copy();
+                    two_deep->doMove(&new_moveset[j], (side == BLACK) ? WHITE : BLACK);
+                    total_score = two_deep->score(side);
+                    total_scores.push_back(total_score);
+                    delete two_deep;
+                }
+            }
+            // once that inner for loop is over, we have all the total scores
+            // that could result from us playing the move we are currently 
+            // considering. so, we can figure out what the worst case is
+            // by taking the min.
+            int current_min = *std::min_element(total_scores.begin(), total_scores.end());
+            if (i == 0) {
+                minmax = current_min;
+                ret = new Move(moveset[i]);
+            }
+            else if (current_min > minmax) {
+                minmax = current_min;
+                ret = new Move(moveset[i]);
+            }
+            total_scores.clear();
+            delete one_deep;
         }
-        max_scoring_move = new Move(*std::max_element(moveset.begin(), moveset.end()));
     }
-
-    board.doMove(max_scoring_move, side);
-    return max_scoring_move;
+    board.doMove(ret, side);
+    return ret;
 }

@@ -26,6 +26,7 @@ public:
     bool get(Side side, int x, int y) const;
     bool isDone();
     bool hasMoves(Side side);
+    int score(Side side) const;
     std::vector<Move> possibleMoves(Side side);
     bool checkMove(Move *m, Side side);
     void doMove(Move *m, Side side);
