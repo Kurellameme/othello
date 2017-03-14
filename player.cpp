@@ -65,34 +65,6 @@ void Player::moveScore(Move &move) {
 }
 */
 
-/*
- * Takes an edge that is next to a corner square on the board and
- * returns a Move holding the corner square that the move is next to.
- *
- * NOTE: ONLY PASS SQUARES THAT ARE NEXT TO A CORNER SQUARE TO THIS METHOD.
- * IF NOT, YOU WILL GET Move(7, 7) RETURNED WHICH WILL ALMOST CERTAINLY BREAK
- * THINGS.
- */
-Move getCornerFromEdge(int move_x, int move_y) {
-    if ((move_x == 1 && move_y == 0) ||
-        (move_x == 0 && move_y == 1) ||
-        (move_x == 1 && move_y == 1)) {
-        return Move(0, 0);
-    }
-    else if ((move_x == 6 && move_y == 0) ||
-             (move_x == 6 && move_y == 1) ||
-             (move_x == 7 && move_y == 1)) {
-        return Move(7, 0);
-    }
-    else if ((move_x == 0 && move_y == 6) ||
-             (move_x == 1 && move_y == 6) ||
-             (move_x == 1 && move_y == 7)) {
-        return Move(0, 7);
-    }
-    else {
-        return Move(7, 7);
-    }
-}
 
 /*
  * Compute the next move given the opponent's last move. Your AI is

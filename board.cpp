@@ -88,6 +88,35 @@ bool isNextToCorner(int x, int y) {
             (x == 7 && y == 6));
 }
 
+/*
+ * Takes an edge that is next to a corner square on the board and
+ * returns a Move holding the corner square that the move is next to.
+ *
+ * NOTE: ONLY PASS SQUARES THAT ARE NEXT TO A CORNER SQUARE TO THIS METHOD.
+ * IF NOT, YOU WILL GET Move(7, 7) RETURNED WHICH WILL ALMOST CERTAINLY BREAK
+ * THINGS.
+ */
+Move getCornerFromEdge(int move_x, int move_y) {
+    if ((move_x == 1 && move_y == 0) ||
+        (move_x == 0 && move_y == 1) ||
+        (move_x == 1 && move_y == 1)) {
+        return Move(0, 0);
+    }
+    else if ((move_x == 6 && move_y == 0) ||
+             (move_x == 6 && move_y == 1) ||
+             (move_x == 7 && move_y == 1)) {
+        return Move(7, 0);
+    }
+    else if ((move_x == 0 && move_y == 6) ||
+             (move_x == 1 && move_y == 6) ||
+             (move_x == 1 && move_y == 7)) {
+        return Move(0, 7);
+    }
+    else {
+        return Move(7, 7);
+    }
+}
+
 int Board::score(Side side) const {
     int score = 0;
     for (int i = 0; i < 8; i++) {
@@ -101,7 +130,13 @@ int Board::score(Side side) const {
                         score += GOOD;
                     }
                     else if (isNextToCorner(i, j)) {
-                        score--;
+                        Move corner = getCornerFromEdge(i, j);
+                        if (occupied(corner.getX(), corner.getY())) {
+                            score += GOOD;
+                        }
+                        else {
+                            score--;
+                        }
                     }
                     else {
                         score++;
@@ -115,7 +150,13 @@ int Board::score(Side side) const {
                         score -= GOOD;
                     }
                     else if (isNextToCorner(i, j)) {
-                        score++;
+                        Move corner = getCornerFromEdge(i, j);
+                        if (occupied(corner.getX(), corner.getY())) {
+                            score -= GOOD;
+                        }
+                        else {
+                            score++;
+                        }
                     }
                     else {
                         score--;
@@ -149,7 +190,6 @@ bool Board::isDone() {
  * Returns a vector of all possible moves.
  * Returns an empty vector if no moves are possible.
  */
-//TODO set
 std::vector<Move> Board::possibleMoves(Side side) {
     std::vector<Move> possible_moves;
     for (int i = 0; i < 8; i++) {
